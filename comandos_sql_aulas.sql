@@ -28,7 +28,8 @@ UPDATE Pedido SET valor_pedido = (
 )
 WHERE id = 1;
 
--- Informar o valor total que o cliente pagou de todos os pedidos (estavam todos no carrinho juntos) feitos em determinada data_pedido
+-- Informar o valor total que o cliente pagou de todos os pedidos (estavam todos no carrinho juntos) 
+-- feitos em determinada data_pedido
 SELECT Cliente.nome, SUM(Pedido.valor_pedido) AS total_pago
 FROM Cliente
 JOIN Pedido ON Cliente.id = Pedido.IDcliente
