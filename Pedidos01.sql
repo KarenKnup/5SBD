@@ -15,7 +15,7 @@ BEGIN
 END //
 DELIMITER ;
 
-CALL AddCliente('jdoe', 'John Doe', 'john.doe@example.com', '11122233344', '12345-678');
+-- CALL AddCliente('jdoe', 'John Doe', 'john.doe@example.com', '11122233344', '12345-678');
 
 CREATE TABLE Produto (
 	id INT NOT NULL AUTO_INCREMENT,
@@ -36,6 +36,7 @@ CREATE TABLE Pedido (
 	IDcliente INT,
 	IDproduto INT,
 	quantidade_produto INT NOT NULL,
+	valor_pedido DECIMAL(10, 2),  -- 10 dígitos no total, 2 após a vírgula,
 	PRIMARY KEY (id),
 	FOREIGN KEY (IDcliente) REFERENCES Cliente(id),
 	FOREIGN KEY (IDproduto) REFERENCES Produto(id)
@@ -52,6 +53,7 @@ CREATE TABLE ItemPedido (
 	id INT NOT NULL AUTO_INCREMENT,
 	IDpedido INT,
 	IDproduto INT,
+	data_pedido DATETIME NOT NULL,
 	PRIMARY KEY (id),
 	FOREIGN KEY (IDpedido) REFERENCES Pedido(id),
 	FOREIGN KEY (IDproduto) REFERENCES Produto(id)
