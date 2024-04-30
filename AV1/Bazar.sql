@@ -170,7 +170,6 @@ BEGIN
     WHERE sku NOT IN (SELECT sku FROM Produtos);
 END;
 
-
 -- Inserção de Pedidos e ItensPedido
 CREATE PROCEDURE TransformarEInserirPedidosEItens AS
 BEGIN
