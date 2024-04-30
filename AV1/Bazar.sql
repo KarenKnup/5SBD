@@ -111,3 +111,36 @@ INSERT INTO Pedidos (order_id, purchase_date, payments_date, client_id)
 SELECT ct.order_id, ct.purchase_date, ct.payments_date, c.client_id
 FROM CargaTemp ct
 JOIN Clientes c ON ct.cpf = c.cpf;
+
+-- Obter o preço total de todos os itens comprados por um cliente em uma única sessão de compra
+-- (ou seja, todos os itens que foram adicionados ao mesmo carrinho e comprados juntos)
+CREATE PROCEDURE ObterPrecoTotalPorPedido
+    @order_id NVARCHAR(50)
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    SELECT 
+        p.order_id,
+        SUM(ip.item_price * ip.quantity_purchased) AS TotalPrice
+    FROM 
+        Pedidos p
+        INNER JOIN ItensPedido ip ON p.order_id = ip.order_id
+    WHERE 
+        p.order_id = @order_id
+    GROUP BY 
+        p.order_id;
+END;
+GO
+
+SELECT 
+    p.order_id,
+    SUM(ip.item_price * ip.quantity_purchased) AS TotalPrice
+FROM 
+    Pedidos p
+    JOIN ItensPedido ip ON p.order_id = ip.order_id
+GROUP BY 
+    p.order_id;
+
+
+
