@@ -1,8 +1,6 @@
 CREATE DATABASE BazarTemTudo;
-GO
 
 USE BazarTemTudo;
-GO
 
 CREATE TABLE CargaTemp (
     order_id VARCHAR(50),
@@ -29,7 +27,6 @@ CREATE TABLE CargaTemp (
     ship_country VARCHAR(50),
     ioss_number VARCHAR(50)
 );
-GO
 
 CREATE TABLE Clientes (
     client_id INT PRIMARY KEY IDENTITY(1,1),
@@ -38,7 +35,6 @@ CREATE TABLE Clientes (
     buyer_email VARCHAR(100),
     buyer_phone_number VARCHAR(20)
 );
-GO
 
 CREATE TABLE Produtos (
     product_id INT PRIMARY KEY IDENTITY(1,1),
@@ -46,7 +42,6 @@ CREATE TABLE Produtos (
     product_name VARCHAR(100),
     stock INT DEFAULT 0
 );
-GO
 
 CREATE TABLE Pedidos (
     order_id VARCHAR(50) PRIMARY KEY,
@@ -56,7 +51,6 @@ CREATE TABLE Pedidos (
     total_price DECIMAL(10, 2),
     FOREIGN KEY (client_id) REFERENCES Clientes(client_id)
 );
-GO
 
 CREATE TABLE ItensPedido (
     order_item_id VARCHAR(50),
@@ -68,13 +62,12 @@ CREATE TABLE ItensPedido (
     FOREIGN KEY (order_id) REFERENCES Pedidos(order_id),
     FOREIGN KEY (product_id) REFERENCES Produtos(product_id)
 );
-GO
 
 INSERT INTO CargaTemp (order_id, order_item_id, purchase_date, payments_date, buyer_email, buyer_name, cpf, buyer_phone_number, sku, product_name, quantity_purchased, currency, item_price, ship_service_level, recipient_name, ship_address_1, ship_address_2, ship_address_3, ship_city, ship_state, ship_postal_code, ship_country, ioss_number)
 VALUES 
-('O1001', 'OI1001', '2024-04-01', '2024-04-02', 'email1@example.com', 'John Doe', '12345678901', '555-1234', 'SKU1001', 'Widget A', 2, 'USD', 20.00, 'Standard', 'John Doe', '123 Elm St', 'Apt 4', NULL, 'Springfield', 'IL', '62701', 'USA', NULL),
-('O1002', 'OI1002', '2024-04-01', '2024-04-02', 'email2@example.com', 'Jane Smith', '98765432109', '555-5678', 'SKU1002', 'Gadget B', 1, 'USD', 45.50, 'Express', 'Jane Smith', '456 Oak St', NULL, NULL, 'Columbus', 'OH', '43210', 'USA', NULL),
-('O1003', 'OI1003', '2024-04-03', '2024-04-04', 'email3@example.com', 'Alice Johnson', '23456789012', '555-8765', 'SKU1003', 'Tool C', 3, 'USD', 15.75, 'Next Day', 'Alice Johnson', '789 Pine St', NULL, NULL, 'Austin', 'TX', '73301', 'USA', NULL);
+('O1001', 'OI1001', '2024-04-01', '2024-04-02', 'john@example.com', 'John', '12345678901', '555-1234', 'SKU1001', 'A', 2, 'USD', 20.00, 'Standard', 'John', '123 Elm St', 'Apt 4', NULL, 'Springfield', 'IL', '62701', 'USA', NULL),
+('O1002', 'OI1002', '2024-04-01', '2024-04-02', 'jane@example.com', 'Jane', '98765432109', '555-5678', 'SKU1002', 'B', 1, 'USD', 45.50, 'Express', 'Jane', '456 Oak St', NULL, NULL, 'Columbus', 'OH', '43210', 'USA', NULL),
+('O1003', 'OI1003', '2024-04-03', '2024-04-04', 'alice@example.com', 'Alice', '23456789012', '555-8765', 'SKU1003', 'C', 3, 'USD', 15.75, 'Day', 'Alice', '789 Pine St', NULL, NULL, 'Austin', 'TX', '73301', 'USA', NULL);
 
 -- Inserção de novos clientes
 INSERT INTO Clientes (cpf, buyer_name, buyer_email, buyer_phone_number)
