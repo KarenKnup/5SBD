@@ -142,5 +142,51 @@ FROM
 GROUP BY 
     p.order_id;
 
+BULK INSERT CargaTemp
+FROM 'C:\Users\Karen\Documents\Bazar.csv'
+WITH
+(
+    FIELDTERMINATOR = ',',  
+    ROWTERMINATOR = '\n',   
+    FIRSTROW = 2           
+);
+
+-- Inserção de Clientes
+CREATE PROCEDURE TransformarEInserirClientes AS
+BEGIN
+    INSERT INTO Clientes (cpf, buyer_name, buyer_email, buyer_phone_number)
+    SELECT DISTINCT cpf, buyer_name, buyer_email, buyer_phone_number
+    FROM CargaTemp
+    WHERE cpf NOT IN (SELECT cpf FROM Clientes);
+END;
+
+
+-- Inserção de Produtos
+CREATE PROCEDURE TransformarEInserirProdutos AS
+BEGIN
+    INSERT INTO Produtos (sku, product_name)
+    SELECT DISTINCT sku, product_name
+    FROM CargaTemp
+    WHERE sku NOT IN (SELECT sku FROM Produtos);
+END;
+
+
+-- Inserção de Pedidos e ItensPedido
+CREATE PROCEDURE TransformarEInserirPedidosEItens AS
+BEGIN
+    INSERT INTO Pedidos (order_id, purchase_date, payments_date, client_id)
+    SELECT ct.order_id, ct.purchase_date, ct.payments_date, c.client_id
+    FROM CargaTemp ct
+    JOIN Clientes c ON ct.cpf = c.cpf;
+
+    INSERT INTO ItensPedido (order_item_id, order_id, product_id, quantity_purchased, item_price)
+    SELECT ct.order_item_id, ct.order_id, p.product_id, ct.quantity_purchased, ct.item_price
+    FROM CargaTemp ct
+    JOIN Produtos p ON ct.sku = p.sku;
+END;
+
+
+
+
 
 
