@@ -109,6 +109,8 @@ SET p.stock = p.stock - ip.quantity_purchased;
 
 ------------------- AUTOMATIZANDO OS PROCESSOS DO BANCO DE DADOS ----------------------------
 
+--> Procedures (Procedimentos): conjunto de instruções SQL que você pode salvar no banco de dados para executar operações complexas ou repetitivas
+
 -->  Procedimento que insere um novo pedido, atualiza o estoque de produtos e contabiliza os itenspedido
 
 DELIMITER //
