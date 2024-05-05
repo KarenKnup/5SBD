@@ -106,11 +106,100 @@ UPDATE Produtos p
 INNER JOIN ItensPedido ip ON p.product_id = ip.product_id
 SET p.stock = p.stock - ip.quantity_purchased;
 
--- Obter o preço total de todos os itens comprados por cada cliente em uma única sessão de compra (todos os pedidos no mesmo carrinho)
-
 
 ------------------- AUTOMATIZANDO OS PROCESSOS DO BANCO DE DADOS ----------------------------
 
+-->  Procedimento que insere um novo pedido, atualiza o estoque de produtos e contabiliza os itenspedido
 
+DELIMITER //
 
+CREATE PROCEDURE AddNewOrder(
+    IN p_order_id VARCHAR(50),
+    IN p_purchase_date DATETIME,
+    IN p_payments_date DATETIME,
+    IN p_cpf VARCHAR(20),
+    IN p_total_price DECIMAL(10, 2)
+)
+BEGIN
+    DECLARE v_client_id INT;
 
+    -- Encontrar o client_id baseado no CPF
+    SELECT client_id INTO v_client_id
+    FROM Clientes
+    WHERE cpf = p_cpf;
+
+    -- Inserir o novo pedido
+    INSERT INTO Pedidos (order_id, purchase_date, payments_date, client_id, total_price)
+    VALUES (p_order_id, p_purchase_date, p_payments_date, v_client_id, p_total_price);
+
+END //
+DELIMITER ;
+
+-- CALL AddNewOrder('O1234', '2024-05-05 12:00:00', '2024-05-05 12:30:00', '12345678901', 150.00);
+
+--> Transferir os dados da tabela CargaTemp que é temporária para as permanentes e limpar ela
+
+DELIMITER //
+
+CREATE PROCEDURE MigrateAndCleanTempData()
+BEGIN
+    -- Inserindo novos clientes na tabela Clientes
+    INSERT INTO Clientes (cpf, buyer_name, buyer_email, buyer_phone_number)
+    SELECT DISTINCT cpf, buyer_name, buyer_email, buyer_phone_number
+    FROM CargaTemp
+    WHERE cpf NOT IN (SELECT cpf FROM Clientes);
+
+    -- Inserindo novos produtos na tabela Produtos
+    INSERT INTO Produtos (product_id, sku, product_name, stock)
+    SELECT DISTINCT order_item_id, sku, product_name, 0
+    FROM CargaTemp
+    WHERE sku NOT IN (SELECT sku FROM Produtos)
+    GROUP BY sku;
+
+    -- Inserindo novos pedidos na tabela Pedidos
+    INSERT INTO Pedidos (order_id, purchase_date, payments_date, client_id, total_price)
+    SELECT ct.order_id, ct.purchase_date, ct.payments_date, c.client_id,
+           SUM(ct.item_price * ct.quantity_purchased) AS total_price
+    FROM CargaTemp ct
+    JOIN Clientes c ON ct.cpf = c.cpf
+    GROUP BY ct.order_id;
+
+    -- Inserindo itens de pedidos na tabela ItensPedido
+    INSERT INTO ItensPedido (order_item_id, order_id, product_id, quantity_purchased, item_price)
+    SELECT ct.order_item_id, ct.order_id, p.product_id, ct.quantity_purchased, ct.item_price
+    FROM CargaTemp ct
+    JOIN Produtos p ON ct.sku = p.sku
+    WHERE NOT EXISTS (
+        SELECT 1 FROM ItensPedido ip WHERE ip.order_item_id = ct.order_item_id
+    );
+
+    -- Atualizando o estoque na tabela Produtos
+    UPDATE Produtos p
+    JOIN (
+        SELECT sku, SUM(quantity_purchased) AS total_purchased
+        FROM CargaTemp
+        GROUP BY sku
+    ) q ON p.sku = q.sku
+    SET p.stock = p.stock - q.total_purchased;
+
+    -- Limpeza da tabela temporária CargaTemp
+    DELETE FROM CargaTemp;
+
+    -- Committing the transaction
+    COMMIT;
+END //
+DELIMITER ;
+
+--> Gatilho para atualizar o estoque depois de inserir algo em ItensPedido
+
+DELIMITER //
+
+CREATE TRIGGER AfterItemInsert
+AFTER INSERT ON ItensPedido
+FOR EACH ROW
+BEGIN
+    UPDATE Produtos
+    SET stock = stock - NEW.quantity_purchased
+    WHERE product_id = NEW.product_id;
+END //
+DELIMITER ;
