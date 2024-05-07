@@ -63,7 +63,7 @@ CREATE TABLE ItensPedido (
     item_price DECIMAL(10, 2),
     PRIMARY KEY (order_item_id),
     FOREIGN KEY (order_id) REFERENCES Pedidos(order_id),
-    FOREIGN KEY (product_id) REFERENCES Produtos(product_id),
+    FOREIGN KEY (product_id) REFERENCES Produtos(product_id)
 );
 
 -- Inserindo exemplos em CargaTemp e Produtos
@@ -82,7 +82,7 @@ VALUES
 ('OI1002', 'SKU1002', 'Vestido', '10'),
 ('OI1003', 'SKU1003', 'Balão', '20');
 
--- Inserindo em Clientes que estão na CargaTemp em Clientes [Não vai inserir o mesmo cliente 2 vezes porque o CPF é único e há o DISTINCT]
+-- Inserindo em Clientes que estão na CargaTemp [Não vai inserir o mesmo cliente 2 vezes porque o CPF é único e há o DISTINCT]
 INSERT INTO Clientes (cpf, buyer_name, buyer_email, buyer_phone_number)
 SELECT DISTINCT cpf, buyer_name, buyer_email, buyer_phone_number
 FROM CargaTemp
