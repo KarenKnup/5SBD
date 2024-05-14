@@ -28,180 +28,114 @@ CREATE TABLE CargaTemp (
     ioss_number VARCHAR(50)
 );
 
-CREATE TABLE Clientes (
-    client_id INT AUTO_INCREMENT,
-    cpf VARCHAR(20) UNIQUE,
-    buyer_name VARCHAR(100),
-    buyer_email VARCHAR(100),
-    buyer_phone_number VARCHAR(20),
-    PRIMARY KEY(client_id)
-);
-
-CREATE TABLE Produtos (
-    product_id VARCHAR(50) UNIQUE,
-    sku VARCHAR(50),
-    product_name VARCHAR(100),
-    stock INT DEFAULT 0,
-    PRIMARY KEY (product_id)
-);
-
-CREATE TABLE Pedidos (
-    order_id VARCHAR(50) UNIQUE,
-    purchase_date DATETIME,
-    payments_date DATETIME,
-    client_id VARCHAR(50),
-    total_price DECIMAL(10, 2),
-    PRIMARY KEY(order_id),
-    FOREIGN KEY (client_id) REFERENCES Clientes(client_id)
-);
-
-CREATE TABLE ItensPedido (
-    order_item_id VARCHAR(50) UNIQUE,
-    order_id VARCHAR(50),
-    product_id VARCHAR(50),
-    quantity_purchased INT,
-    item_price DECIMAL(10, 2),
-    PRIMARY KEY (order_item_id),
-    FOREIGN KEY (order_id) REFERENCES Pedidos(order_id),
-    FOREIGN KEY (product_id) REFERENCES Produtos(product_id)
-);
-
--- Inserindo exemplos em CargaTemp e Produtos
+-- Inserindo exemplos em CargaTemp e o Estoque
 INSERT INTO CargaTemp (order_id, order_item_id, purchase_date, payments_date, buyer_email, buyer_name, cpf, buyer_phone_number, sku, product_name, quantity_purchased, currency, item_price, ship_service_level, recipient_name, ship_address_1, ship_address_2, ship_address_3, ship_city, ship_state, ship_postal_code, ship_country, ioss_number)
 VALUES 
-('O1001', 'OI1001', '2024-04-01', '2024-04-02', 'john@example.com', 'John', '12345678901', '555-1234', 'SKU1001', 'A', 2, 'USD', 20.00, 'Standard', 'John', '123 Elm St', 'Apt 4', NULL, 'Springfield', 'IL', '62701', 'USA', NULL),
-('O1002', 'OI1002', '2024-04-01', '2024-04-02', 'jane@example.com', 'Jane', '98765432109', '555-5678', 'SKU1002', 'B', 1, 'USD', 45.50, 'Express', 'Jane', '456 Oak St', NULL, NULL, 'Columbus', 'OH', '43210', 'USA', NULL),
-('O1003', 'OI1003', '2024-04-03', '2024-04-04', 'alice@example.com', 'Alice', '23456789012', '555-8765', 'SKU1003', 'C', 3, 'USD', 15.75, 'Day', 'Alice', '789 Pine St', NULL, NULL, 'Austin', 'TX', '73301', 'USA', NULL),
-('O1004', 'OI1003', '2024-04-03', '2024-04-04', 'alice@example.com', 'Alice', '23456789012', '555-8765', 'SKU1003', 'C', 5, 'USD', 15.75, 'Day', 'Alice', '789 Pine St', NULL, NULL, 'Austin', 'TX', '73301', 'USA', NULL),
-('O1005', 'OI1002', '2024-04-04', '2024-04-04', 'alice@example.com', 'Alice', '23456789012', '555-8765', 'SKU1003', 'C', 3, 'USD', 15.75, 'Day', 'Alice', '789 Pine St', NULL, NULL, 'Austin', 'TX', '73301', 'USA', NULL),
-('O1006', 'OI1003', '2024-04-01', '2024-04-02', 'john@example.com', 'John', '12345678901', '555-1234', 'SKU1001', 'A', 2, 'USD', 20.00, 'Standard', 'John', '123 Elm St', 'Apt 4', NULL, 'Springfield', 'IL', '62701', 'USA', NULL);
+('O1001', 'OI1001', '2024-04-01', '2024-04-02', 'john@example.com', 'John', '12345678901', '98555-1234', 'SKU1001', 'Caneta chique', 2, 'USD', 20.00, 'Standard', 'John', '123 Elm St', 'Apt 4', NULL, 'Springfield', 'IL', '62701', 'USA', NULL),
+('O1001', 'OI1002', '2024-04-01', '2024-04-02', 'john@example.com', 'John', '12345678909', '98555-1234', 'SKU1002', 'Sabonete daora', 2, 'USD', 5.00, 'Standard', 'John', '123 Elm St', 'Apt 4', NULL, 'Springfield', 'IL', '62701', 'USA', NULL),
+('O1002', 'OI1003', '2024-04-03', '2024-04-03', 'john@example.com', 'John', '12345678904', '98555-1234', 'SKU1003', 'Refil de caneta', 5, 'USD', 3.00, 'Standard', 'John', '123 Elm St', 'Apt 4', NULL, 'Springfield', 'IL', '62701', 'USA', NULL),
+('O1003', 'OI1004', '2024-04-04', '2024-04-04', 'alice@example.com', 'Alice', '23456789012', '9555-8765', 'SKU1003', 'Refil de caneta', 3, 'USD', 3.00, 'Day', 'Alice', '789 Pine St', NULL, NULL, 'Austin', 'TX', '73301', 'USA', NULL)
 
-INSERT INTO Produtos(product_id, sku, product_name, stock)
-VALUES
-('OI1001', 'SKU1001', 'Relógio', '15'),
-('OI1002', 'SKU1002', 'Vestido', '10'),
-('OI1003', 'SKU1003', 'Balão', '20');
+CREATE TABLE Produtos (		
+	sku VARCHAR(50) NOT NULL,
+	product_name VARCHAR(100) NOT NULL,
+	item_price DECIMAL(10, 2) NOT NULL,
+	ioss_number VARCHAR(50),
+	PRIMARY KEY (sku)
+);
 
--- Inserindo em Clientes que estão na CargaTemp [Não vai inserir o mesmo cliente 2 vezes porque o CPF é único e há o DISTINCT]
-INSERT INTO Clientes (cpf, buyer_name, buyer_email, buyer_phone_number)
-SELECT DISTINCT cpf, buyer_name, buyer_email, buyer_phone_number
-FROM CargaTemp
-WHERE cpf NOT IN (SELECT cpf FROM Clientes);
+CREATE TABLE Clientes (	
+	client_id INT AUTO_INCREMENT,
+	buyer_email VARCHAR(100) NOT NULL,
+	buyer_name VARCHAR(100) NOT NULL,
+	cpf VARCHAR(20) NOT NULL,
+	buyer_phone_number VARCHAR(20) NOT NULL,   
+	ship_address_1 VARCHAR(200),
+	ship_address_2 VARCHAR(200),
+	ship_address_3 VARCHAR(200),
+	ship_city VARCHAR(50) NOT NULL,
+	ship_state VARCHAR(50) NOT NULL,
+	ship_postal_code VARCHAR(20) NOT NULL,
+	ship_country VARCHAR(50) NOT NULL,
+	currency VARCHAR(10) NOT NULL,
+	PRIMARY KEY(client_id)
+);
 
--- Inserindo em Pedidos os que estão em CargaTemp, ele também calcula o total de cada pedido 
-INSERT INTO Pedidos (order_id, purchase_date, payments_date, client_id, total_price)
-SELECT order_id, purchase_date, payments_date, cpf, (item_price * quantity_purchased) AS total_price
-FROM CargaTemp;
-
--- Inserção de Itens de Pedido [se o produto já existir na lista, soma a quantidade comprada com a que se deseja inserir]
-INSERT INTO ItensPedido (order_item_id, order_id, product_id, quantity_purchased, item_price)
-SELECT ct.order_item_id, ct.order_id, p.product_id, ct.quantity_purchased, ct.item_price
-FROM CargaTemp ct
-JOIN Produtos p ON ct.sku = p.sku
-ON DUPLICATE KEY UPDATE
-    quantity_purchased = ItensPedido.quantity_purchased + VALUES(quantity_purchased);
-
--- Atualizando o estoque de Produtos baseado em cada quantidade comprada pelos clientes nos pedidos [diz o total de quantos itens foram comprados de cada produto]
-UPDATE Produtos p
-INNER JOIN ItensPedido ip ON p.product_id = ip.product_id
-SET p.stock = p.stock - ip.quantity_purchased;
+CREATE TABLE Pedidos (        
+	order_id VARCHAR(50) UNIQUE,
+	client_id INT,
+	purchase_date DATETIME NOT NULL,
+	payments_date DATETIME NOT NULL,
+	total_pago DECIMAL(10, 2) NOT NULL,    
+	ship_service_level VARCHAR(50) NOT NULL,
+	recipient_name VARCHAR(100),
+	PRIMARY KEY (order_id),
+	FOREIGN KEY (client_id) REFERENCES Clientes(client_id)
+);   
 
 
-------------------- AUTOMATIZANDO OS PROCESSOS DO BANCO DE DADOS ----------------------------
-
---> Procedures (Procedimentos): conjunto de instruções SQL que você pode salvar no banco de dados para executar operações complexas ou repetitivas
-
--->  Procedimento que insere um novo pedido, atualiza o estoque de produtos e contabiliza os itenspedido
-
+ -- Criação da stored procedure
 DELIMITER //
 
-CREATE PROCEDURE AddNewOrder(
-    IN p_order_id VARCHAR(50),
-    IN p_purchase_date DATETIME,
-    IN p_payments_date DATETIME,
-    IN p_cpf VARCHAR(20),
-    IN p_total_price DECIMAL(10, 2)
-)
-BEGIN
-    DECLARE v_client_id INT;
+CREATE PROCEDURE ProcessarPedido()
+BEGIN   
+    -- Cada item de cada pedido (1 pedido pode ter vários itens)
+    DROP TABLE IF EXISTS ItensPedido;
 
-    -- Encontrar o client_id baseado no CPF
-    SELECT client_id INTO v_client_id
-    FROM Clientes
-    WHERE cpf = p_cpf;
-
-    -- Inserir o novo pedido
-    INSERT INTO Pedidos (order_id, purchase_date, payments_date, client_id, total_price)
-    VALUES (p_order_id, p_purchase_date, p_payments_date, v_client_id, p_total_price);
-
-END //
-DELIMITER ;
-
--- CALL AddNewOrder('O1234', '2024-05-05 12:00:00', '2024-05-05 12:30:00', '12345678901', 150.00);
-
---> Transferir os dados da tabela CargaTemp que é temporária para as permanentes e limpar ela
-
-DELIMITER //
-
-CREATE PROCEDURE MigrateAndCleanTempData()
-BEGIN
-    -- Inserindo novos clientes na tabela Clientes
-    INSERT INTO Clientes (cpf, buyer_name, buyer_email, buyer_phone_number)
-    SELECT DISTINCT cpf, buyer_name, buyer_email, buyer_phone_number
-    FROM CargaTemp
-    WHERE cpf NOT IN (SELECT cpf FROM Clientes);
-
-    -- Inserindo novos produtos na tabela Produtos
-    INSERT INTO Produtos (product_id, sku, product_name, stock)
-    SELECT DISTINCT order_item_id, sku, product_name, 0
-    FROM CargaTemp
-    WHERE sku NOT IN (SELECT sku FROM Produtos)
-    GROUP BY sku;
-
-    -- Inserindo novos pedidos na tabela Pedidos
-    INSERT INTO Pedidos (order_id, purchase_date, payments_date, client_id, total_price)
-    SELECT ct.order_id, ct.purchase_date, ct.payments_date, c.client_id,
-           SUM(ct.item_price * ct.quantity_purchased) AS total_price
-    FROM CargaTemp ct
-    JOIN Clientes c ON ct.cpf = c.cpf
-    GROUP BY ct.order_id;
-
-    -- Inserindo itens de pedidos na tabela ItensPedido
-    INSERT INTO ItensPedido (order_item_id, order_id, product_id, quantity_purchased, item_price)
-    SELECT ct.order_item_id, ct.order_id, p.product_id, ct.quantity_purchased, ct.item_price
-    FROM CargaTemp ct
-    JOIN Produtos p ON ct.sku = p.sku
-    WHERE NOT EXISTS (
-        SELECT 1 FROM ItensPedido ip WHERE ip.order_item_id = ct.order_item_id
+    CREATE TABLE IF NOT EXISTS ItensPedido_ordenado (        
+    	order_id VARCHAR(50),
+    	order_item_id VARCHAR(50),
+    	produto VARCHAR(50),
+    	quantity_purchased INT NOT NULL,
+    	preco_item DECIMAL(10, 2) NOT NULL,
+    	PRIMARY KEY (order_item_id),
+    	FOREIGN KEY (order_id) REFERENCES Pedidos(order_id),
+    	FOREIGN KEY (produto) REFERENCES Produtos(sku)
     );
 
-    -- Atualizando o estoque na tabela Produtos
-    UPDATE Produtos p
-    JOIN (
-        SELECT sku, SUM(quantity_purchased) AS total_purchased
-        FROM CargaTemp
-        GROUP BY sku
-    ) q ON p.sku = q.sku
-    SET p.stock = p.stock - q.total_purchased;
+    -- Inserindo os produtos na tabela Produtos [um produto com o mesmo sku não será inserido]
+	INSERT INTO Produtos (sku, product_name, item_price, ioss_number)
+	SELECT DISTINCT  sku, product_name, item_price, ioss_number
+	FROM CargaTemp
+	WHERE sku NOT IN (SELECT sku FROM Produtos);
+    
+    -- Inserindo os clientes na tabela Clientes [um cliente com o mesmo CPF não será inserido]
+	INSERT INTO Clientes (buyer_email, buyer_name, cpf, buyer_phone_number, ship_address_1, ship_address_2, ship_address_3, ship_city, ship_state, ship_postal_code, ship_country, currency)
+	SELECT DISTINCT buyer_email, buyer_name, cpf, buyer_phone_number, ship_address_1, ship_address_2, ship_address_3, ship_city, ship_state, ship_postal_code, ship_country, currency
+	FROM CargaTemp
+	WHERE cpf NOT IN (SELECT cpf FROM Clientes);
+    
+    -- Inserindo em Pedidos os que estão em CargaTemp, ele também calcula o total_pago de cada pedido [todo o carrinho]
+	INSERT INTO Pedidos (order_id, client_id, purchase_date, payments_date, ship_service_level, recipient_name, total_pago)
+	SELECT DISTINCT c.order_id, (SELECT client_id FROM Clientes AS cli WHERE cli.cpf = c.cpf), c.purchase_date, c.payments_date, c.ship_service_level, c.recipient_name, 
+		(SELECT SUM(c1.item_price*c1.quantity_purchased) FROM CargaTemp AS c1 WHERE c1.order_id = c.order_id) AS total_pago
+	FROM CargaTemp AS c
+    WHERE c.order_id NOT IN (SELECT order_id FROM Pedidos);
+    
+    -- Inserindo os itens de cada pedido na tabela ItensPedido [a inserção é feita com base nos itens que possuem maior qtde]
+	INSERT INTO ItensPedido_ordenado (order_item_id, order_id, produto, quantity_purchased, preco_item) 
+	SELECT DISTINCT order_item_id, order_id, sku, quantity_purchased, 
+	(quantity_purchased * (SELECT p.item_price FROM Produtos AS p WHERE p.sku = CargaTemp.sku))
+	FROM CargaTemp
+	WHERE order_item_id NOT IN (SELECT order_item_id FROM ItensPedido_ordenado);
 
-    -- Limpeza da tabela temporária CargaTemp
-    DELETE FROM CargaTemp;
+	CREATE TABLE ItensPedido AS
+	SELECT * FROM ItensPedido_ordenado
+	ORDER BY quantity_purchased DESC;
 
-    -- Committing the transaction
-    COMMIT;
-END //
+    -- Limpa a tabela temporária 
+    DROP TABLE IF EXISTS ItensPedido_ordenado;    
+END;
+//
+
 DELIMITER ;
 
---> Gatilho para atualizar o estoque depois de inserir algo em ItensPedido
+CALL ProcessarPedido();
 
-DELIMITER //
+INSERT INTO CargaTemp (order_id, order_item_id, purchase_date, payments_date, buyer_email, buyer_name, cpf, buyer_phone_number, sku, product_name, quantity_purchased, currency, item_price, ship_service_level, recipient_name, ship_address_1, ship_address_2, ship_address_3, ship_city, ship_state, ship_postal_code, ship_country, ioss_number)
+VALUES 
+('O1004', 'OI1005', '2024-04-03', '2024-04-03', 'joseph@example.com', 'Joseph', '12345678955', '98555-1234', 'SKU1001', 'Caneta chique', 3, 'USD', 20.00, 'Standard', 'Joseph', '123 Elm St', 'Apt 4', NULL, 'Springfield', 'IL', '62701', 'USA', NULL)
 
-CREATE TRIGGER AfterItemInsert
-AFTER INSERT ON ItensPedido
-FOR EACH ROW
-BEGIN
-    UPDATE Produtos
-    SET stock = stock - NEW.quantity_purchased
-    WHERE product_id = NEW.product_id;
-END //
-DELIMITER ;
+CALL ProcessarPedido();
+
+SELECT * FROM Clientes;
