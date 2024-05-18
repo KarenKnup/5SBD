@@ -115,12 +115,6 @@ DELIMITER //
 
 CREATE PROCEDURE ProcessarPedido()
 BEGIN
-    -- Inserindo os produtos na tabela Produtos (se não existir)
-    INSERT INTO Produtos (sku, product_name, item_price, ioss_number)
-    SELECT DISTINCT sku, product_name, item_price, ioss_number
-    FROM CargaTemp
-    WHERE sku NOT IN (SELECT sku FROM Produtos);
-
     -- Inserindo os clientes na tabela Clientes (se não existir)
     INSERT INTO Clientes (buyer_email, buyer_name, cpf, buyer_phone_number, ship_address_1, ship_address_2, ship_address_3, ship_city, ship_state, ship_postal_code, ship_country, currency)
     SELECT DISTINCT buyer_email, buyer_name, cpf, buyer_phone_number, ship_address_1, ship_address_2, ship_address_3, ship_city, ship_state, ship_postal_code, ship_country, currency
