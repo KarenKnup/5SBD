@@ -148,9 +148,9 @@ BEGIN
     
     -- Atualiza o estoque dos Produtos de acordo com os quantity_purchased
     -- e insere os ItensPedidos atendidos na tabela de PedidosAtendidos
-    -- [priorize inserir primeiro os itenspedidos de maior item_price*quantity_purchased,
-    -- e não permita o estoque ficar negativo, se não houver estoque o suficiente,
-    -- nao insira a linha, insira os itens rejeitados em PedidosRejeitados]
+    -- [prioriza inserir primeiro os itenspedidos de maior item_price*quantity_purchased,
+    -- e não permite o estoque ficar negativo, se não houver estoque o suficiente,
+    -- nao insere a linha, ele insere os itens rejeitados em PedidosRejeitados]
 
     -- Atualiza o estoque dos produtos e insere os itens atendidos
     INSERT INTO PedidosAtendidos (order_item_id)
@@ -232,3 +232,12 @@ IGNORE 1 ROWS
     ship_postal_code,
     ship_country ,
     ioss_number);
+
+-- Exibir os resultados
+SELECT * FROM CargaTemp;
+SELECT * FROM Clientes;
+SELECT * FROM Pedidos;
+SELECT * FROM ItensPedido ORDER BY quantity_purchased * preco_item DESC; -- exibir pelos mais caros
+SELECT * FROM Produtos;
+SELECT * FROM PedidosAtendidos;
+SELECT * FROM PedidosRejeitados;
