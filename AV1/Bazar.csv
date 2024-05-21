@@ -1,1 +1,0 @@
-order_id,order_item_id,purchase_date,payments_date,buyer_email,buyer_name,cpf,buyer_phone_number,sku,product_name,quantity_purchased,currency,item_price,ship_service_level,recipient_name,ship_address_1,ship_address_2,ship_address_3,ship_city,ship_state,ship_postal_code,ship_country,ioss_number
