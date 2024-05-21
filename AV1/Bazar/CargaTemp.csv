@@ -1,0 +1,5 @@
+order_id,order_item_id,purchase_date,payments_date,buyer_email,buyer_name,cpf,buyer_phone_number,sku,product_name,quantity_purchased,currency,item_price,ship_service_level,recipient_name,ship_address_1,ship_address_2,ship_address_3,ship_city,ship_state,ship_postal_code,ship_country,ioss_number
+O1001,OI1001,2024-04-01 10:00:00,2024-04-02 10:00:00,john@example.com,John,12345678901,98555-1234,SKU1001,Caneta chique,2,USD,20.00,Standard,John,123 Elm St,Apt 4,,Springfield,IL,62701,USA,
+O1001,OI1002,2024-04-01 10:00:00,2024-04-02 10:00:00,john@example.com,John,12345678901,98555-1234,SKU1002,Sabonete daora,2,USD,5.00,Standard,John,123 Elm St,Apt 4,,Springfield,IL,62701,USA,
+O1002,OI1003,2024-04-03 12:00:00,2024-04-03 12:30:00,jane@example.com,Jane,12345678902,98555-5678,SKU1003,Refil de caneta,5,USD,3.00,Standard,Jane,456 Oak St,,Springfield,IL,62702,USA,
+O1003,OI1004,2024-04-04 14:00:00,2024-04-04 14:30:00,alice@example.com,Alice,12345678903,95555-8765,SKU1004,Caderno elegante,3,USD,10.00,Day,Alice,789 Pine St,,Austin,TX,73301,USA,
