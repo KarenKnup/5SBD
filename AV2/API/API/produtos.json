@@ -1,0 +1,32 @@
+[
+  {
+    "SKU": "PROD1",
+    "Stock": 10,
+    "ProductName": "Caneta chique",
+    "ItemPrice": 5.99
+  },
+  {
+    "SKU": "PROD2",
+    "Stock": 30,
+    "ProductName": "Chinelo azul",
+    "ItemPrice": 29.99
+  },
+  {
+    "SKU": "PROD3",
+    "Stock": 20,
+    "ProductName": "Flor de pl�stico daora",
+    "ItemPrice": 15.00
+  },
+  {
+    "SKU": "PROD4",
+    "Stock": 10,
+    "ProductName": "Sabonete Palmolive",
+    "ItemPrice": 5.00
+  },
+  {
+    "SKU": "PROD5",
+    "Stock": 10,
+    "ProductName": "Carrinho de controle remoto",
+    "ItemPrice": 59.99
+  }
+]
